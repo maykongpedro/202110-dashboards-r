@@ -10,14 +10,16 @@
 # 
 # Para acessar a base diamonds, carrrege o pacote ggplot2
 # 
-# library(ggplto2)
+# library(ggplot2)
 # 
 # ou rode 
 # 
 # ggplot2::diamonds
 
-library(shiny)
+# Aluno: Maykon Gabriel
+# Exercício resolvido no dia 06/10/2021
 
+library(shiny)
 
 # defindo base
 db_diamonds <- ggplot2::diamonds

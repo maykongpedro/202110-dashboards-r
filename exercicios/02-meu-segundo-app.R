@@ -10,3 +10,23 @@
 # Observação: se você usar uma base própria, 
 # não se esqueça de descrever as variáveis utilizadas na hora 
 # de tirar dúvidas.
+
+library(shiny)
+
+ui <- fluidPage(
+  
+    # texto
+    
+    
+    # input
+    
+    
+    # output
+    
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)

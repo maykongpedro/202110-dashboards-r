@@ -1,0 +1,14 @@
+name: exercicio1-curso-dashboards
+title: exercicio1-curso-dashboards
+username:
+account: maykon-gabriel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4816394
+bundleId: 5112454
+url: https://maykon-gabriel.shinyapps.io/exercicio1-curso-dashboards/
+when: 1633568283.74999
+lastSyncTime: 1633568283.74999
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: 02-meu-segundo-app.R|extra-01-input-output-resolucao.R|extra-02-input-output.R
