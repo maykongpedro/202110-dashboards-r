@@ -20,7 +20,7 @@ ui <- fluidPage(
     ),
   
   # definir o nome do output para ser chamado no server
-  plotOutput(outputId = "histograma")
+  plotOutput(outputId = "histograma")  
   
 )
 
