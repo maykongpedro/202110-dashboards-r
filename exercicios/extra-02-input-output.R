@@ -15,13 +15,8 @@
 # 
 # Para acessar a base diamonds, carrrege o pacote ggplot2
 # 
-
-#library(ggplot2)
-
-# 
-# ou rode 
-# 
-#ggplot2::diamonds
+# Aluno: Maykon Gabriel
+# Exercício resolvido no dia 07/10/2021
 
 library(shiny)
 
