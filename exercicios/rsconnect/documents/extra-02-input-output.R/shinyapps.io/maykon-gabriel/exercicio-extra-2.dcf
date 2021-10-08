@@ -1,0 +1,14 @@
+name: exercicio-extra-2
+title: exercicio-extra-2
+username:
+account: maykon-gabriel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4825071
+bundleId: 5116446
+url: https://maykon-gabriel.shinyapps.io/exercicio-extra-2/
+when: 1633652395.5367
+lastSyncTime: 1633652395.5367
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: 01-meu-primeiro-app-resolucao.R|02-meu-segundo-app.R|extra-01-input-output-resolucao.R
