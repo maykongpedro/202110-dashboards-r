@@ -1,5 +1,8 @@
 library(shiny)
 
+# ver gráfico de reatividade (CTRL + F3 no navegador)
+options(shiny.reactlog = TRUE)
+
 ui <- fluidPage(
     
     # texto
