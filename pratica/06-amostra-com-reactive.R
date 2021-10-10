@@ -23,10 +23,10 @@ ui <- fluidPage(
     textOutput(outputId = "resultado")
     
 )
-
+    
 server <- function(input, output, session) {
 
-    # colocando o objeto amostra em um contexto reativo
+    # colocando o objeto amostra em uma expressão reativa
     amostra <- reactive({
         sample(
             1:10,
