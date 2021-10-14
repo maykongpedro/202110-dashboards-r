@@ -16,19 +16,6 @@ bd_credito <- readr::read_rds("exercicios/dados/credito.rds")
 
 bd_credito |> dplyr::glimpse()
 
-
-# criar função para o nome do eixo x
-nome_do_eixo_x <- function(eixo_x){
-    
-    # retira underscore, coloca espaço e transforma primeira letra em uppercase
-    nome_do_eixo_x <- eixo_x |> 
-        stringr::str_replace_all("_", " ") |> 
-        stringr::str_to_title()
-    
-    nome_do_eixo_x
-    
-}
-
 # gerar base para o plot
 base_plot <- bd_credito |> 
     dplyr::filter(!is.na(estado_civil)) |> 
@@ -42,6 +29,17 @@ qtd_clientes <- base_plot |>
     dplyr::summarise(clientes = sum(qtd)) |> 
     dplyr::pull()
 
+# criar função para o nome do eixo x
+nome_do_eixo_x <- function(eixo_x){
+    
+    # retira underscore, coloca espaço e transforma primeira letra em uppercase
+    nome_do_eixo_x <- eixo_x |> 
+        stringr::str_replace_all("_", " ") |> 
+        stringr::str_to_title()
+    
+    nome_do_eixo_x
+    
+}
 
 # definir itens básico do plot
 config_plot <-
@@ -57,7 +55,6 @@ config_plot <-
         "subtitle" = glue::glue("Proporção baseada no total de {qtd_clientes} clientes."),
         "caption" = "**@Dataviz:** @maykongpedro | **Fonte:** Base 'credito', disponibilizada pela CursoR"
     )
-config_plot[["eixo_x_title"]]
 
 # plotar gráfico de proporção
 base_plot |> 
