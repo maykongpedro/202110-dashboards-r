@@ -5,6 +5,7 @@
 # representando a proporção de clientes "bons" e "ruins" da base.
 
 library(shiny)
+library(shinyWidgets)
 
 # Carregar base -----------------------------------------------------------
 bd_credito <- readr::read_rds("dados/credito.rds")
@@ -33,21 +34,37 @@ escolhas_categoria <- bd_credito |>
 
 ui <- fluidPage(
   
-    # texto
-    "Proporção de clientes bons e ruins da base 'credito'",
-    
-    # input
-    selectInput(
-        inputId = "categoria",
-        label = "Escolha a categoria desejada",
-        choices = escolhas_categoria
+    titlePanel("Proporção de clientes bons e ruins da base 'credito'"),
+
+    # layout
+    sidebarLayout( 
         
-    ),
-    
-    # output
-    plotOutput(outputId = "plot_proporcao")
-    
-)
+        sidebarPanel(
+            
+            # input
+            radioGroupButtons(
+                inputId = "categoria",
+                label = "Escolha a categoria desejada:", 
+                choices = escolhas_categoria,
+                size = "lg"
+            ),
+
+            
+            "A categoria será exibida no gráfico no eixo x, gerando uma visão",
+             br(),
+            "de proporção de status dos clientes existentes na categoria.",
+            
+        ),
+
+        
+        mainPanel(
+
+            # output
+            plotOutput(outputId = "plot_proporcao")  
+            
+            )
+        )
+    )
 
 server <- function(input, output, session) {
     
@@ -120,7 +137,7 @@ server <- function(input, output, session) {
                 caption = config_plot[["caption"]]
             )+
             
-            ggplot2::theme_minimal()+
+            ggplot2::theme_minimal(base_size = 15)+
             ggplot2::theme(
                 axis.text = ggplot2::element_text(face = "bold"),
                 axis.title = ggplot2::element_text(face = "bold"),
@@ -137,7 +154,7 @@ server <- function(input, output, session) {
                 ),
                 plot.margin = ggplot2::unit(c(1, 1, 1, 1), "cm") 
             )
-        
+
     })
     
   
