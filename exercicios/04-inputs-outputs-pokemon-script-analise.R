@@ -45,8 +45,12 @@ base_plot |>
             x = ataque,
             y = defesa
         ),
-        color = "red",
-        size = 3
+        color="black",
+        fill="#69b3a2",
+        shape=23,
+        alpha=0.5,
+        size=3,
+        stroke = 1
 
     ) +
     ggrepel::geom_text_repel(
