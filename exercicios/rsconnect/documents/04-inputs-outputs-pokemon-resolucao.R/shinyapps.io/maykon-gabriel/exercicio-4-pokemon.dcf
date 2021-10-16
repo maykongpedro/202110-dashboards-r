@@ -1,0 +1,14 @@
+name: exercicio-4-pokemon
+title: exercicio-4-pokemon
+username:
+account: maykon-gabriel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4883062
+bundleId: 5144180
+url: https://maykon-gabriel.shinyapps.io/exercicio-4-pokemon/
+when: 1634352273.36132
+lastSyncTime: 1634352273.36132
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: 01-meu-primeiro-app-resolucao.R|02-meu-segundo-app-resolucao.R|03-inputs-outputs-credito-resolucao.R|03-inputs-outputs-credito-script-analise.R|04-inputs-outputs-pokemon-script-analise.R|05-inputs-outputs-ssp.R|dados/cetesb.rds|dados/credito.rds|dados/imdb.rds|dados/ssp.rds|extra-01-input-output-resolucao.R|extra-02-input-output-resolucao.R|extra-03-selecao-multipla.R|extra-04-date-input.R
