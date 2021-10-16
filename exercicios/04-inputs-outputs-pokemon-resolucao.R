@@ -42,7 +42,15 @@ ui <- fluidPage(
                 inputId = "geracao",
                 label = "Selecione a geração do pokemon",
                 choices = geracao$id_geracao
-            )
+            ),
+            
+            "Aluno: Maykon G. Pedro",
+            br(),
+            "Exercício 4 - Inputs-Outputs-Pokemon",
+            br(),
+            "Script: 021-inputs-outputs-pokemon.R",
+            br(),
+            "Os nomes exibidos no gráfico são os nomes dos Pokemons."
             
         ),
         

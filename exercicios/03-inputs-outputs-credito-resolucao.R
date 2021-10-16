@@ -49,7 +49,12 @@ ui <- fluidPage(
                 size = "lg"
             ),
 
-            
+            "Aluno: Maykon G. Pedro",
+            br(),
+            "Exercício 3 - Inputs-Outputs-Credito",
+            br(),
+            "Script: 020-inputs-outputs-credito.R",
+            br(),            
             "A categoria será exibida no gráfico no eixo x, gerando uma visão",
              br(),
             "de proporção de status dos clientes existentes na categoria.",
