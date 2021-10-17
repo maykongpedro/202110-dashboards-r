@@ -1,0 +1,14 @@
+name: exercicio-3-credito
+title: exercicio-3-credito
+username:
+account: maykon-gabriel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4867428
+bundleId: 5145849
+url: https://maykon-gabriel.shinyapps.io/exercicio-3-credito/
+when: 1634414667.04394
+lastSyncTime: 1634414667.04394
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: 01-meu-primeiro-app-resolucao.R|02-meu-segundo-app-resolucao.R|03-inputs-outputs-credito-script-analise.R|04-inputs-outputs-pokemon-resolucao.R|04-inputs-outputs-pokemon-script-analise.R|05-inputs-outputs-ssp-script-analise.R|05-inputs-outputs-ssp.R|dados/cetesb.rds|dados/imdb.rds|dados/pkmn.rds|dados/ssp.rds|extra-01-input-output-resolucao.R|extra-02-input-output-resolucao.R|extra-03-selecao-multipla.R|extra-04-date-input.R
