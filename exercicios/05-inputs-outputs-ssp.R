@@ -8,11 +8,10 @@
 # 
 
 library(shiny)
-
+library(shinyWidgets)
 
 # Carregar base -----------------------------------------------------------
 bd_criminalidade <- readr::read_rds("dados/ssp.rds")
-bd_criminalidade_pivot |> dplyr::glimpse()
 
 
 # Criar base de escolhas -------------------------------------------------
@@ -21,6 +20,20 @@ meses <- bd_criminalidade |>
 
 ano <- bd_criminalidade |> 
     dplyr::distinct(ano)
+
+municipios <- bd_criminalidade |> 
+    dplyr::distinct(municipio_nome) |> 
+    dplyr::arrange(municipio_nome)
+
+regioes <- bd_criminalidade |> 
+    dplyr::distinct(regiao_nome) |> 
+    dplyr::arrange(regiao_nome) |> 
+    tidyr::drop_na()
+
+delegacias <- bd_criminalidade |> 
+    dplyr::distinct(delegacia_nome) |> 
+    dplyr::arrange(delegacia_nome) |> 
+    tidyr::drop_na()
 
 
 # Criar app ---------------------------------------------------------------
@@ -41,6 +54,37 @@ ui <- fluidPage(
         label = "Selecione o ano desejado",
         choices = ano$ano
     ),
+
+    #input3
+    pickerInput( # input que permite selecionar tudo ou não
+        inputId = "regiao",
+        label = "Selecione a região de interesse",
+        choices = regioes$regiao_nome,
+        options = list(`actions-box` = TRUE),
+        multiple = T,
+        selected = regioes$regiao_nome
+    ),
+    
+    #input4
+    pickerInput( # input que permite selecionar tudo ou não
+        inputId = "nome_muni",
+        label = "Selecione o munícipio",
+        choices = municipios$municipio_nome,
+        options = list(`actions-box` = TRUE),
+        multiple = T,
+        selected = municipios$municipio_nome
+    ),
+    
+    #input5
+    pickerInput( # input que permite selecionar tudo ou não
+        inputId = "delegacia",
+        label = "Selecione a delegacia",
+        choices = delegacias$delegacia_nome,
+        options = list(`actions-box` = TRUE),
+        multiple = T,
+        selected = delegacias$delegacia_nome
+    ),
+    
     
     "Aluno: Maykon G. Pedro",
     br(),
@@ -64,10 +108,10 @@ server <- function(input, output, session) {
         base_filtrada <- bd_criminalidade |> 
             dplyr::filter(
                 mes == input$mes,
-                ano == input$ano
-                # municipio_nome == "",
-                # delegacia_nome == "",
-                # regiao_nome == ""
+                ano == input$ano,
+                regiao_nome %in% input$regiao,
+                municipio_nome %in% input$nome_muni,
+                delegacia_nome %in% input$delegacia
             ) 
         
         # agrupar todos os crimes em apenas uma coluna
