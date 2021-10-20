@@ -135,42 +135,43 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   
     
-    output$tabela <- renderTable({
-        
-        # faz o filtro primeiro e depois a pivotagem para ficar mais rápido
-        base_filtrada <- bd_criminalidade |> 
-            dplyr::filter(
-                mes == input$mes,
-                ano == input$ano,
-                regiao_nome %in% input$regiao,
-                municipio_nome %in% input$nome_muni,
-                delegacia_nome %in% input$delegacia
-            ) 
-        
-        # agrupar todos os crimes em apenas uma coluna
-        base_tabela <- base_filtrada |> 
-            
-            tidyr::pivot_longer(cols = 6:ncol(bd_criminalidade),
-                                names_to = "crime_cometido",
-                                values_to = "ocorrencias") |> 
-            
-            # retirando vítimas dos crimes
-            dplyr::filter(!stringr::str_detect(crime_cometido, "vit")) |> 
-            dplyr::filter(!is.na(delegacia_nome))
-        
-        
-        base_tabela |> 
-        dplyr::group_by(crime_cometido) |> 
-        dplyr::summarise(total_ocorrencias = sum(ocorrencias)) |> 
-        dplyr::mutate(total_ocorrencias = round(total_ocorrencias, 0)) |> 
-        dplyr::arrange(desc(total_ocorrencias)) |> 
-        dplyr::rename(
-            "Tipo" = "crime_cometido",
-            "Total de ocorrências" = "total_ocorrencias"
-        )
-        
-    })
-        
+  output$tabela <- renderTable({
+    #validate(need(ano$ano != "", "Por gentileza, selecione um ano"))
+    
+    # faz o filtro primeiro e depois a pivotagem para ficar mais rápido
+    base_filtrada <- bd_criminalidade |>
+      dplyr::filter(
+        mes == input$mes,
+        ano == input$ano,
+        regiao_nome %in% input$regiao,
+        municipio_nome %in% input$nome_muni,
+        delegacia_nome %in% input$delegacia
+      )
+    
+    # agrupar todos os crimes em apenas uma coluna
+    base_tabela <- base_filtrada |>
+      
+      tidyr::pivot_longer(
+        cols = 6:ncol(bd_criminalidade),
+        names_to = "crime_cometido",
+        values_to = "ocorrencias"
+      ) |>
+      
+      # retirando vítimas dos crimes
+      dplyr::filter(!stringr::str_detect(crime_cometido, "vit")) |>
+      dplyr::filter(!is.na(delegacia_nome))
+    
+    
+    base_tabela |>
+      dplyr::group_by(crime_cometido) |>
+      dplyr::summarise(total_ocorrencias = sum(ocorrencias)) |>
+      dplyr::mutate(total_ocorrencias = round(total_ocorrencias, 0)) |>
+      dplyr::arrange(desc(total_ocorrencias)) |>
+      dplyr::rename("Tipo" = "crime_cometido",
+                    "Total de ocorrências" = "total_ocorrencias")
+    
+  })
+  
     
 }
 
