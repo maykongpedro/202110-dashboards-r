@@ -70,16 +70,15 @@ server <- function(input, output, session) {
         
         # plotar gráfico
         base_plot |> 
-            ggplot2::ggplot()+
-            ggplot2::geom_line(
+            ggplot2::ggplot(
                 ggplot2::aes(
                     x = month,
                     y = qtd_voos,
                     group = carrier,
                     color = carrier
-                ),
-                size = 1
+                )
             )+
+            ggplot2::geom_line(size = 1)+
             ggplot2::scale_color_discrete(guide = "none")+
             ggplot2::scale_x_date(
                 date_breaks = "1 month",
@@ -87,13 +86,10 @@ server <- function(input, output, session) {
                 
             ) +
             directlabels::geom_dl(
-                ggplot2::aes(
-                    x = month,
-                    y = qtd_voos,
-                    label = carrier
-                ),
+                ggplot2::aes(label = carrier),
                 method = list(directlabels::dl.combine("first.points", "last.points")), 
                 #method = "last.points",
+                #method = "smart.grid",
                 cex = 0.8 
             ) +
             
