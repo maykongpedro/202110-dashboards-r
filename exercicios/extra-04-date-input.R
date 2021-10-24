@@ -40,7 +40,6 @@ bd_voos <- bd_voos |>
     )
 
 
-
 # Criar app ---------------------------------------------------------------
 
 
@@ -55,6 +54,9 @@ ui <- fluidPage(
         format = "dd-mm-yyyy"
     ),
     
+    # texto
+    "Tabela descritiva",
+    
     # output1
     tableOutput(outputId = "tb_descritiva"),
     
@@ -68,6 +70,24 @@ server <- function(input, output, session) {
     # output1
     output$tb_descritiva <- renderTable({
         
+      # gerar tabela descritiva
+      base_table <- bd_voos |> 
+        #dplyr::filter(date == "2013-01-02") |> 
+        dplyr::filter(date == input$data) |>
+        dplyr::summarise(
+          qtd_voos = dplyr::n(),
+          atraso_med_partida = mean(dep_delay, na.rm = TRUE),
+          atraso_med_chegada = mean(arr_delay, na.rm = TRUE)
+        ) 
+      
+      # plotar tabela
+      base_table |> 
+        dplyr::rename(
+          "Número de voos" = "qtd_voos",
+          "Atraso médio de partida (min)" = "atraso_med_partida",
+          "Atraso médio de chegada (min)"= "atraso_med_chegada"
+        )
+      
         
     })
     
