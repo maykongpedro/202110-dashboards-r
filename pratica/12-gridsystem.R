@@ -62,6 +62,32 @@ ui <- fluidPage(
       offset = 8, # pulando 8 espaços
       quadrado(6)
       )
+  ),
+  
+  # espaço
+  br(),
+  
+  # linha 3
+  fluidRow(
+    column(
+      width = 6,
+      quadrado("Coluna de tamanho 6"),
+      
+      fluidRow(
+        column(
+          width = 10,
+          quadrado2("Coluna de tamanho 10")
+        ),
+        column(
+          width = 2,
+          quadrado2("T2")
+        ),
+        
+
+      )
+      
+      
+    )
   )
 
 )
