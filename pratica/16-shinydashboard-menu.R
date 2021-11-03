@@ -6,7 +6,7 @@ library(shinydashboard)
 ui <- dashboardPage(
     
     # sempre nessa ordem: header -> siderbar -> body
-    dashboardHeader(),
+    dashboardHeader(title = "Meu shinydashboard"),
     
     dashboardSidebar(
         sidebarMenu(
@@ -30,6 +30,13 @@ ui <- dashboardPage(
                     tabName = "pag6"
                 )
             )
+        ),
+        
+        # colocando um input
+        selectInput(
+            inputId = "numero",
+            label = "Um número",
+            choices = 1:10
         )
     ),
     
