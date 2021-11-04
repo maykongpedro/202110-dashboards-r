@@ -48,7 +48,16 @@ ui <- dashboardPage(
                      infoBoxOutput(outputId = "num_filmes", width = 4),
                      infoBoxOutput(outputId = "num_diretores", width = 4),
                      infoBoxOutput(outputId = "num_atores", width = 4)
+                 ),
+                 
+                 # fluidorow3
+                 fluidRow(
+                     column(
+                         width = 12,
+                         plotOutput(outputId = "plot_filmes_ano", height = "400px")
+                     )
                  )
+                 
                  ),
              
              # tabitem 2
@@ -92,12 +101,20 @@ server <- function(input, output, session) {
     output$num_diretores <- renderInfoBox({
         
         # calcular quantidade de diretores únicos na base
-        numero_diretores <- ""
+        numero_diretores <- imdb |> 
+            dplyr::pull(elenco) |> 
+            stringr::str_split(", ") |> 
+            purrr::flatten_chr() |> 
+            dplyr::n_distinct()
+        
+        # formatar para exibir melhor no dashboard
+        numero_diretores <- prettyNum(numero_diretores, big.mark = ".", decimal.mark = ",")
+        
         
         infoBox(
             title = "Número de diretores e diretoras",
             value = numero_diretores,
-            color = "orange",
+            color = "olive",
             icon = icon("film")
         )
         
@@ -107,14 +124,46 @@ server <- function(input, output, session) {
     output$num_atores <- renderInfoBox({
         
         # calcular quantidade de atores distintos na base
-        numeros_atores <- ""
+        numeros_atores <- imdb |> 
+            dplyr::pull(direcao) |> 
+            stringr::str_split(", ") |> 
+            purrr::flatten_chr() |> 
+            dplyr::n_distinct()
+        
+        # formatar para exibir melhor no dashboard
+        numeros_atores <- prettyNum(numeros_atores, big.mark = ".", decimal.mark = ",")
+        
+        formatar_numero <- function(x){
+            
+            scales::number_format()
+            
+            }
         
         infoBox(
             title = "Número de atrizes e atores",
             value = numeros_atores,
-            color = "orange",
+            color = "purple",
             icon = icon("film")
         )
+        
+    })
+
+    # output 4 - gráfico de filmes por ano
+    output$plot_filmes_ano <- renderPlot({
+        
+        # fazer gráfico da quantidade de filmes por ano
+        imdb |>
+            dplyr::count(ano, sort = TRUE) |> 
+            ggplot2::ggplot(
+                ggplot2::aes(
+                    x = ano,
+                    y = n
+                )
+            )+
+            ggplot2::geom_col(color = "black", fill = "pink")+
+            ggplot2::ggtitle("Número de filmes por ano") +
+            cowplot::theme_minimal_grid()
+            
         
     })
     
