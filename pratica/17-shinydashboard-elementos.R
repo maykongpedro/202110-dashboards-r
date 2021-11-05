@@ -8,6 +8,35 @@ library(shinydashboard)
 # carregar base
 # imdb <- basesCursoR::pegar_base("imdb")
 
+
+# Criar função que será usada ao longo do app -----------------------------
+
+# a melhor prática para uso dessas funções seria ter uma pasta R dentro do diretório
+# do app, assim quando o shiny roda, ele carrega automaticamente os scrips dentro
+# da pasta R
+
+fn_separar <- function(base, coluna){
+  
+  base |> 
+    dplyr::pull({{coluna}}) |> 
+    stringr::str_split(", ") |> 
+    purrr::flatten_chr() |> 
+    unique()
+  
+}
+
+
+fn_separar_e_contar_distintos <- function(base, coluna){
+  
+  base |> 
+    fn_separar({{coluna}}) |> 
+    length()
+  
+}
+
+
+
+
 ui <- dashboardPage(
     
      # cabeçalho
@@ -60,11 +89,45 @@ ui <- dashboardPage(
                  
                  ),
              
+             
              # tabitem 2
-             tabItem(tabName = "financeiro"),
+             tabItem(
+               tabName = "financeiro",
+               # fluid row 1
+               fluidRow( # add linha
+                 column( # add coluna
+                   width = 12,
+                   h2("Financeiro") # add título
+                 )
+               ),
+               fluidRow(
+                 box(
+                   width = 4,
+                   
+                   # usando essa função para poder criar um input dentro do server
+                   # porque nesse caso as escolhas dos gêneros estão na base
+                   uiOutput(outputId = "ui_financeiro_genero")
+
+                 ),
+                 box(
+                   width = 8,
+                   plotOutput(outputId = "plot_orc_vs_receita")
+                 )
+               )
+               
+               
+               ),
              
              # tabitem 3
-             tabItem(tabName = "elenco")
+             tabItem(
+               tabName = "elenco",
+               
+               # Lição de casa: dado um ator/atriz (ou diretor (a)), mostrar um
+               # gráfico com os filmes feitos por essa pessoa e a nota desses filmes
+               # filtrar um ano antes de gerar as opções, porque senão a quantidade 
+               # será muito grande e irá ficar lento)
+               
+               )
          )
      )
     
@@ -82,6 +145,7 @@ server <- function(input, output, session) {
         numero_filmes <- nrow(imdb)
         
         # formatar para exibir melhor no dashboard
+        numero_filmes <- scales::number(numero_filmes, big.mark = ".", decimal.mark = ",")
         numero_filmes <- prettyNum(numero_filmes, big.mark = ".", decimal.mark = ",")
   
         # essa info box pode ser carregada na UI se a base for carregada antes,
@@ -101,11 +165,7 @@ server <- function(input, output, session) {
     output$num_diretores <- renderInfoBox({
         
         # calcular quantidade de diretores únicos na base
-        numero_diretores <- imdb |> 
-            dplyr::pull(elenco) |> 
-            stringr::str_split(", ") |> 
-            purrr::flatten_chr() |> 
-            dplyr::n_distinct()
+        numero_diretores <- fn_separar_e_contar_distintos(imdb, direcao)
         
         # formatar para exibir melhor no dashboard
         numero_diretores <- prettyNum(numero_diretores, big.mark = ".", decimal.mark = ",")
@@ -124,11 +184,7 @@ server <- function(input, output, session) {
     output$num_atores <- renderInfoBox({
         
         # calcular quantidade de atores distintos na base
-        numeros_atores <- imdb |> 
-            dplyr::pull(direcao) |> 
-            stringr::str_split(", ") |> 
-            purrr::flatten_chr() |> 
-            dplyr::n_distinct()
+        numeros_atores <- fn_separar_e_contar_distintos(imdb, elenco)
         
         # formatar para exibir melhor no dashboard
         numeros_atores <- prettyNum(numeros_atores, big.mark = ".", decimal.mark = ",")
@@ -165,6 +221,44 @@ server <- function(input, output, session) {
             cowplot::theme_minimal_grid()
             
         
+    })
+    
+    # output 5 - seletor de gêneros (uiOutput)
+    output$ui_financeiro_genero <- renderUI({
+      
+      # obtendo os gêneros da base
+      generos <- fn_separar(imdb, genero) |> sort()
+      
+      # criando um input dentro do server usando uiOutput
+      selectInput(
+        inputId = "financeiro_genero",
+        label = "Selecione um ou mais gêneros",
+        multiple = TRUE,
+        choices = generos 
+      )
+      
+    })
+    
+    # output 6 - gráfico de orçamento x receita
+    output$plot_orc_vs_receita <- renderPlot({
+      
+      imdb |> 
+        dplyr::mutate(
+          genero = stringr::str_split(genero, ", ")
+        ) |> 
+        tidyr::unnest(genero) |> 
+        dplyr::filter(genero %in% input$financeiro_genero) |> 
+        dplyr::distinct(titulo, .keep_all = TRUE) |> 
+        
+        ggplot2::ggplot(
+          ggplot2::aes(
+            x = orcamento,
+            y = receita
+          )
+        ) +
+        ggplot2::geom_point() +
+        cowplot::theme_minimal_grid()
+      
     })
     
 }
