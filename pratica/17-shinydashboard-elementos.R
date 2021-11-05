@@ -101,13 +101,17 @@ ui <- dashboardPage(
                  )
                ),
                fluidRow(
+                 
+                 # o box cria uma caixa pra receber algum item, diferente do
+                 # column que só organiza, sem gerear uma caixa
                  box(
                    width = 4,
-                   
+                   title = "Filtros",
+                   status = "info",
+                   solidHeader = TRUE,
                    # usando essa função para poder criar um input dentro do server
                    # porque nesse caso as escolhas dos gêneros estão na base
-                   uiOutput(outputId = "ui_financeiro_genero")
-
+                   uiOutput(outputId = "ui_financeiro_genero"),
                  ),
                  box(
                    width = 8,
