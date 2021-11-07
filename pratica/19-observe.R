@@ -163,10 +163,19 @@ server <- function(input, output, session) {
     
     # output 2 - gráfico
     output$plot_principal <- renderPlot({
-
+        
+        req(input$pokemon)
+        print("Passei por aqui")
+        
         dados |>
             # tabela
-            dplyr::filter(id_geracao == input$geracao) |>
+            # usando isolate() para garantir que o gráfico não seja
+            # gerado novamente quando houver mudança da geração. Ele
+            # só muda quando altera o pokemon. Nesse caso isso é realizado
+            # porque a mudança de geração obrigatoriamente muda a geração,
+            # então o input pokemon mudando não há necessidade da geração
+            # ativar a reatividade também
+            dplyr::filter(id_geracao == isolate(input$geracao)) |>
 
             # criar uma coluna que permita a separação entre o pokemon escolhido
             # e todos os outros, pra poder calcular a média
