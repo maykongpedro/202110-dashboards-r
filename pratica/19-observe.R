@@ -195,6 +195,17 @@ server <- function(input, output, session) {
             dplyr::group_by(status, flag) |>
             dplyr::summarise(valor = mean(valor)) |>
 
+            # -------------------------------------------------------
+            # Lição de casa: organizar a ordem da média e do pokemon
+            # -------------------------------------------------------
+            dplyr::mutate(
+                flag = forcats::lvls_revalue(
+                    flag,
+                    new_levels = c(input$pokemon, "Média da geração")
+                )
+            ) |> 
+            
+        
             # gráfico
             ggplot2::ggplot(
                 ggplot2::aes(
@@ -203,9 +214,10 @@ server <- function(input, output, session) {
                     fill = flag
                 )
             ) +
-            ggplot2::geom_col(position = "dodge")
-
-
+            ggplot2::geom_col(position = "dodge") +
+            ggplot2::scale_fill_discrete(
+                breaks = c(input$pokemon, "Média da geração")
+            )
 
     })
 
