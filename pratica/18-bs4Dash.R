@@ -72,6 +72,14 @@ ui <- dashboardPage(
                 
                 # fluidrow2
                 fluidRow(
+                    column(
+                        width = 12,
+                        uiOutput(outputId = "ui_data_range")
+                    )
+                ),
+                
+                # fluidrow3
+                fluidRow(
                     
                     # info box é um elemento que ja gera uma coluna, ou seja,
                     # nao posso colocar outra coluna aqui dentro usando column
@@ -81,7 +89,7 @@ ui <- dashboardPage(
                     infoBoxOutput(outputId = "num_atores", width = 4)
                 ),
                 
-                # fluidorow3
+                # fluidorow4
                 fluidRow(
                     column(
                         width = 12,
@@ -264,6 +272,44 @@ server <- function(input, output, session) {
             ) +
             ggplot2::geom_point() +
             cowplot::theme_minimal_grid()
+        
+    })
+    
+    # output 7 - seletor de datas (uiOutput)
+    output$ui_data_range <- renderUI({
+        
+        # gerando escolha das datas
+        datas_escolhas <- imdb |>
+            dplyr::mutate(
+                # convertendo pra data
+                data_lancamento = lubridate::ymd(data_lancamento),
+                
+                # criando data para os itens que só tem o ano
+                data_lancamento = dplyr::case_when(
+                    is.na(data_lancamento) ~
+                        stringr::str_glue("{ano}/01/01") |> lubridate::ymd(),
+                    TRUE ~ data_lancamento
+                )
+            )  |> 
+            
+            dplyr::filter(
+                
+                # retirar o filme "Bad Education" que nao tem data de lançamento
+                !is.na(data_lancamento)
+            ) |> 
+            dplyr::pull(data_lancamento)
+        
+        # criando um input dentro do server usando uiOutput
+        dateRangeInput(
+            inputId = "data",
+            label = "Selecione o intervalo de data de lançamento dos filmes:",
+            start = min(datas_escolhas),
+            end = max(datas_escolhas),
+            min = min(datas_escolhas),
+            max = max(datas_escolhas),
+            format = "dd-mm-yyyy",
+            language = "pt-BR"
+        )
         
     })
     
