@@ -149,133 +149,15 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
     
+    #browser()
+    
     # carregar base
     imdb <- basesCursoR::pegar_base("imdb")
     
-    # output 1 - número de filmes
-    output$num_filmes <- renderInfoBox({
-        
-        # quantidade de filmes na base
-        numero_filmes <- nrow(imdb)
-        
-        # formatar para exibir melhor no dashboard
-        numero_filmes <- scales::number(numero_filmes, big.mark = ".", decimal.mark = ",")
-        numero_filmes <- prettyNum(numero_filmes, big.mark = ".", decimal.mark = ",")
-        
-        # essa info box pode ser carregada na UI se a base for carregada antes,
-        # porque ela é basicamente um HMTL, caso seja estático
-        infoBox(
-            title = "Número de filmes",
-            value = numero_filmes,
-            color = "orange",
-            
-            # para usar ícones pode ser utilizado os nomes dos ícones disponíveis
-            # no site "https://fontawesome.com/", o que não está em cinza é gratuito
-            icon = icon("film")
-        )
-    })
+    # vou ter que tratar a base antes pra poder filtrar a data depois
     
-    # output 2 - número de diretores
-    output$num_diretores <- renderInfoBox({
-        
-        # calcular quantidade de diretores únicos na base
-        numero_diretores <- fn_separar_e_contar_distintos(imdb, direcao)
-        
-        # formatar para exibir melhor no dashboard
-        numero_diretores <- prettyNum(numero_diretores, big.mark = ".", decimal.mark = ",")
-        
-        
-        infoBox(
-            title = "Número de diretores e diretoras",
-            value = numero_diretores,
-            color = "olive",
-            icon = icon("film")
-        )
-        
-    })
-    
-    # output 3 - número de atores e atrizes
-    output$num_atores <- renderInfoBox({
-        
-        # calcular quantidade de atores distintos na base
-        numeros_atores <- fn_separar_e_contar_distintos(imdb, elenco)
-        
-        # formatar para exibir melhor no dashboard
-        numeros_atores <- prettyNum(numeros_atores, big.mark = ".", decimal.mark = ",")
-        
-        formatar_numero <- function(x){
-            
-            scales::number_format()
-            
-        }
-        
-        infoBox(
-            title = "Número de atrizes e atores",
-            value = numeros_atores,
-            color = "purple",
-            icon = icon("film")
-        )
-        
-    })
-    
-    # output 4 - gráfico de filmes por ano
-    output$plot_filmes_ano <- renderPlot({
-        
-        # fazer gráfico da quantidade de filmes por ano
-        imdb |>
-            dplyr::count(ano, sort = TRUE) |> 
-            ggplot2::ggplot(
-                ggplot2::aes(
-                    x = ano,
-                    y = n
-                )
-            )+
-            ggplot2::geom_col(color = "black", fill = "pink")+
-            ggplot2::ggtitle("Número de filmes por ano") +
-            cowplot::theme_minimal_grid()
-        
-        
-    })
-    
-    # output 5 - seletor de gêneros (uiOutput)
-    output$ui_financeiro_genero <- renderUI({
-        
-        # obtendo os gêneros da base
-        generos <- fn_separar(imdb, genero) |> sort()
-        
-        # criando um input dentro do server usando uiOutput
-        selectInput(
-            inputId = "financeiro_genero",
-            label = "Selecione um ou mais gêneros",
-            multiple = TRUE,
-            choices = generos 
-        )
-        
-    })
-    
-    # output 6 - gráfico de orçamento x receita
-    output$plot_orc_vs_receita <- renderPlot({
-        
-        imdb |> 
-            dplyr::mutate(
-                genero = stringr::str_split(genero, ", ")
-            ) |> 
-            tidyr::unnest(genero) |> 
-            dplyr::filter(genero %in% input$financeiro_genero) |> 
-            dplyr::distinct(titulo, .keep_all = TRUE) |> 
-            
-            ggplot2::ggplot(
-                ggplot2::aes(
-                    x = orcamento,
-                    y = receita
-                )
-            ) +
-            ggplot2::geom_point() +
-            cowplot::theme_minimal_grid()
-        
-    })
-    
-    # output 7 - seletor de datas (uiOutput)
+    # tarefa de casa: filtrar a base com um intervalo de data ----
+    # output extra - seletor de datas (uiOutput)
     output$ui_data_range <- renderUI({
         
         # gerando escolha das datas
@@ -310,8 +192,176 @@ server <- function(input, output, session) {
             format = "dd-mm-yyyy",
             language = "pt-BR"
         )
+    })
+    
+    
+    imdb <- imdb |>
+        # dplyr::filter(
+        #     dplyr::between(data_lancamento, input$data[1], input$data[2])
+        #     )
+        # dplyr::filter(
+        #     dplyr::between(data_lancamento, as.Date("2019-01-01"), as.Date("2020-01-01"))
+        #     )
+    
+    # output 1 - número de filmes ----
+    output$num_filmes <- renderInfoBox({
+        
+        # quantidade de filmes na base
+        numero_filmes <- nrow(imdb)
+        
+        # formatar para exibir melhor no dashboard
+        numero_filmes <- scales::number(numero_filmes, big.mark = ".", decimal.mark = ",")
+        numero_filmes <- prettyNum(numero_filmes, big.mark = ".", decimal.mark = ",")
+        
+        # essa info box pode ser carregada na UI se a base for carregada antes,
+        # porque ela é basicamente um HMTL, caso seja estático
+        infoBox(
+            title = "Número de filmes",
+            value = numero_filmes,
+            color = "orange",
+            
+            # para usar ícones pode ser utilizado os nomes dos ícones disponíveis
+            # no site "https://fontawesome.com/", o que não está em cinza é gratuito
+            icon = icon("film")
+        )
+    })
+    
+    # output 2 - número de diretores ----
+    output$num_diretores <- renderInfoBox({
+        
+        # calcular quantidade de diretores únicos na base
+        numero_diretores <- fn_separar_e_contar_distintos(imdb, direcao)
+        
+        # formatar para exibir melhor no dashboard
+        numero_diretores <- prettyNum(numero_diretores, big.mark = ".", decimal.mark = ",")
+        
+        
+        infoBox(
+            title = "Número de diretores e diretoras",
+            value = numero_diretores,
+            color = "olive",
+            icon = icon("film")
+        )
         
     })
+    
+    # output 3 - número de atores e atrizes ----
+    output$num_atores <- renderInfoBox({
+        
+        # calcular quantidade de atores distintos na base
+        numeros_atores <- fn_separar_e_contar_distintos(imdb, elenco)
+        
+        # formatar para exibir melhor no dashboard
+        numeros_atores <- prettyNum(numeros_atores, big.mark = ".", decimal.mark = ",")
+        
+        formatar_numero <- function(x){
+            
+            scales::number_format()
+            
+        }
+        
+        infoBox(
+            title = "Número de atrizes e atores",
+            value = numeros_atores,
+            color = "purple",
+            icon = icon("film")
+        )
+        
+    })
+    
+    # output 4 - gráfico de filmes por ano ----
+    output$plot_filmes_ano <- renderPlot({
+        
+        # fazer gráfico da quantidade de filmes por ano
+        imdb |>
+            dplyr::count(ano, sort = TRUE) |> 
+            ggplot2::ggplot(
+                ggplot2::aes(
+                    x = ano,
+                    y = n
+                )
+            )+
+            ggplot2::geom_col(color = "black", fill = "pink")+
+            ggplot2::ggtitle("Número de filmes por ano") +
+            cowplot::theme_minimal_grid()
+        
+        
+    })
+    
+    # output 5 - seletor de gêneros (uiOutput) ----
+    output$ui_financeiro_genero <- renderUI({
+        
+        # obtendo os gêneros da base
+        generos <- fn_separar(imdb, genero) |> sort()
+        
+        # criando um input dentro do server usando uiOutput
+        selectInput(
+            inputId = "financeiro_genero",
+            label = "Selecione um ou mais gêneros",
+            multiple = TRUE,
+            choices = generos 
+        )
+        
+    })
+    
+    # output 6 - gráfico de orçamento x receita ----
+    output$plot_orc_vs_receita <- renderPlot({
+        
+        imdb |> 
+            dplyr::mutate(
+                genero = stringr::str_split(genero, ", ")
+            ) |> 
+            tidyr::unnest(genero) |> 
+            dplyr::filter(genero %in% input$financeiro_genero) |> 
+            dplyr::distinct(titulo, .keep_all = TRUE) |> 
+            
+            ggplot2::ggplot(
+                ggplot2::aes(
+                    x = orcamento,
+                    y = receita
+                )
+            ) +
+            ggplot2::geom_point() +
+            cowplot::theme_minimal_grid()
+        
+    })
+    
+    # # output 7 - seletor de datas (uiOutput) ----
+    # output$ui_data_range <- renderUI({
+    #     
+    #     # gerando escolha das datas
+    #     datas_escolhas <- imdb |>
+    #         dplyr::mutate(
+    #             # convertendo pra data
+    #             data_lancamento = lubridate::ymd(data_lancamento),
+    #             
+    #             # criando data para os itens que só tem o ano
+    #             data_lancamento = dplyr::case_when(
+    #                 is.na(data_lancamento) ~
+    #                     stringr::str_glue("{ano}/01/01") |> lubridate::ymd(),
+    #                 TRUE ~ data_lancamento
+    #             )
+    #         )  |> 
+    #         
+    #         dplyr::filter(
+    #             
+    #             # retirar o filme "Bad Education" que nao tem data de lançamento
+    #             !is.na(data_lancamento)
+    #         ) |> 
+    #         dplyr::pull(data_lancamento)
+    #     
+    #     # criando um input dentro do server usando uiOutput
+    #     dateRangeInput(
+    #         inputId = "data",
+    #         label = "Selecione o intervalo de data de lançamento dos filmes:",
+    #         start = min(datas_escolhas),
+    #         end = max(datas_escolhas),
+    #         min = min(datas_escolhas),
+    #         max = max(datas_escolhas),
+    #         format = "dd-mm-yyyy",
+    #         language = "pt-BR"
+    #     )
+    # })
     
 }
 
