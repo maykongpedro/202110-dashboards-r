@@ -54,10 +54,10 @@ ui <- dashboardPage(
                 # linha 3 - tabela ----
                 fluidRow(
                   box(
-                  width = 12,
-                  title = "Dados",
-                  reactable::reactableOutput(outputId = "tabela")
-                )
+                    width = 12,
+                    title = "Dados",
+                    reactable::reactableOutput(outputId = "tabela")),
+                    downloadButton(outputId = "baixar", label = "Baixar!")
                 )
             )
         )
@@ -67,9 +67,16 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
   
+  # teste download com base reativa ----
+  dados <- reactive({
+    pnud
+  })
+  
   # output1 - gráfico ----
   output$grafico <- plotly::renderPlotly({
     
+    # browser()
+  
     p <- pnud |>
       ggplot2::ggplot(
         ggplot2::aes(
@@ -89,8 +96,18 @@ server <- function(input, output, session) {
       ) +
       cowplot::theme_minimal_grid(12)
 
+    # capturando a linha selecionada
+    if (!is.null(selected())) {
+      linha_selecionada <- pnud |> 
+        dplyr::slice(selected())
+      # add linha selecionada no gráfico
+      p <- p +
+        ggplot2::geom_point(colour = "red", data = linha_selecionada)
+    }
+  
+    # plotando com plotly
     plotly::ggplotly(p)
-    
+
   })
   
   # output2 - mapa com leaflet ----
@@ -108,22 +125,41 @@ server <- function(input, output, session) {
     
   })
 
+  # teste seleção de linhas com reactive ----
+  selected <- reactive({
+    reactable::getReactableState(outputId = "tabela", name = "selected")
+  })
+  
   # output3 - tabela com reactable ----
   output$tabela <- reactable::renderReactable({
     
     pnud |> 
-      dplyr::select(
-        muni_id, muni_nm, uf_sigla, regiao_nm, idhm, espvida, rdpc, gini, pop
-      ) |> 
+      dplyr::select(muni_id,
+                    muni_nm,
+                    uf_sigla,
+                    regiao_nm,
+                    idhm,
+                    espvida,
+                    rdpc,
+                    gini,
+                    pop) |> 
       reactable::reactable(
         striped = TRUE,
         compact = TRUE,
         highlight = TRUE,
+        selection = "multiple", # add seleção de linhas
         columns = list(
           muni_id = reactable::colDef("ID"),
           muni_nm = reactable::colDef(
             "Município", 
-            minWidth = 200
+            minWidth = 200,
+            # add links aos nomes dos municípios
+            cell = function(value, index){
+              url <- sprintf("https://wikipedia.org/wiki/%s", value)
+              htmltools::tags$a(href = url,
+                                taget = "_blank",
+                                as.character(value))
+            }
             ),
           uf_sigla = reactable::colDef("UF"),
           regiao_nm = reactable::colDef("Região"),
@@ -152,6 +188,19 @@ server <- function(input, output, session) {
       )
     
   })
+  
+  # output4 - botão de download ----
+  output$baixar <- downloadHandler(
+    
+    filename = function(){
+      "arquivo.csv"
+    },
+    
+    content = function(file){
+      readr::write_csv(dados(), file)
+    }
+    
+  )
   
 }
 
