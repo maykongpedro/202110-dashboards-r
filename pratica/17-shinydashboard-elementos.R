@@ -144,7 +144,7 @@ server <- function(input, output, session) {
   # carregar base
   imdb <- basesCursoR::pegar_base("imdb")
   
-  # output 1 - número de filmes
+  # output 1 - número de filmes ----
   output$num_filmes <- renderInfoBox({
     
     # quantidade de filmes na base
@@ -167,7 +167,7 @@ server <- function(input, output, session) {
     )
   })
   
-  # output 2 - número de diretores
+  # output 2 - número de diretores ----
   output$num_diretores <- renderInfoBox({
     
     # calcular quantidade de diretores únicos na base
@@ -186,7 +186,7 @@ server <- function(input, output, session) {
     
   })
   
-  # output 3 - número de atores e atrizes
+  # output 3 - número de atores e atrizes ----
   output$num_atores <- renderInfoBox({
     
     # calcular quantidade de atores distintos na base
@@ -210,7 +210,7 @@ server <- function(input, output, session) {
     
   })
   
-  # output 4 - gráfico de filmes por ano
+  # output 4 - gráfico de filmes por ano ----
   output$plot_filmes_ano <- renderPlot({
     
     # fazer gráfico da quantidade de filmes por ano
@@ -229,7 +229,7 @@ server <- function(input, output, session) {
     
   })
   
-  # output 5 - seletor de gêneros (uiOutput)
+  # output 5 - seletor de gêneros (uiOutput) ----
   output$ui_financeiro_genero <- renderUI({
     
     # obtendo os gêneros da base
@@ -245,7 +245,7 @@ server <- function(input, output, session) {
     
   })
   
-  # output 6 - gráfico de orçamento x receita
+  # output 6 - gráfico de orçamento x receita ----
   output$plot_orc_vs_receita <- renderPlot({
     
     imdb |> 
